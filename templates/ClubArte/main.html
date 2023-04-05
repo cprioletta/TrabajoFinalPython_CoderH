@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block header %}
+
+    <title>Main</title>
+
+{% endblock %}
+
+{% block bodytitleoptions %}
+
+     <!-- aca van las opciones de login logout y logon -->
+
+{% endblock %}
+
+<header class="bodyheader">
+    <div class="container px-4">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-9">
+                {% block bodyheader %}
+                <h1 class="col-lg-9">
+                    <br> el <b>Club</b> de <b>Arte</b> <br>
+                </h1>
+                <p class="bodyheadertext"> Te invitamos a unirte a esta comunidad de amantes del arte
+                a través de nuestros ciclos mensuales de poesía y películas o a nuestro concurso de fotografía!
+                </p>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</header>
