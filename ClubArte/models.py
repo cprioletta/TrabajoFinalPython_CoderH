@@ -30,3 +30,18 @@ class Cine(models.Model):
 class ImgCine(models.Model):
     id_movie = models.OneToOneField(Cine, on_delete=models.CASCADE)
     img_movie = models.ImageField(upload_to='cine', null=True, blank=True)
+
+class Fotografia(models.Model):
+    id_foto = models.AutoField(primary_key=True)
+    title_foto = models.CharField(max_length=50)
+    author_foto = models.CharField(max_length=60)
+    descr_foto = models.CharField(max_length=1000)
+    user_foto = models.CharField(max_length=50)
+    creationdate_foto = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"La fotografía {self.title_foto} tomada por {self.author_foto}."
+
+class ImgFotograf(models.Model):
+    id_foto = models.OneToOneField(Fotografia, on_delete=models.CASCADE)
+    img_foto = models.ImageField(upload_to='fotog', null=True, blank=True)

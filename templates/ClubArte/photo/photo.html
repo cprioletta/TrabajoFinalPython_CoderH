@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block headertitlle %}
+<title>Fotografia</title>
+{% endblock %}
+
+{% block bodytitleoptions %}
+
+{% endblock %}
+
+{% block bodyheader %}
+
+<h1 class="display-5 fw-bolder text-white mb-2">Cargá tu fotografia</h1>
+<p class="lead text-white-50 mb-4">A continuación, cargá tu colección fotográfica!</p>
+<div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+</div>
+{% endblock %}
+{% block bodyoptions %}
+<div class="datos-photo">}
+    <div class="space2">
+    </div>
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <form class="bodyoptionstitle" action="{% url 'foto_crear' %}" method="post"
+                  enctype="multipart/form-data">{% csrf_token %}
+                <table style="width:100%">
+                    {{ Foto_Forms.media }}
+                    {% for field in Foto_Forms %}
+                    <tr>
+                        {% if field.label == "Nombre de la foto" %}
+                        <th>Nombre foto <em>*</em></th>
+                        {% endif %}
+                        {% if field.label == "Descripcion de la foto" %}
+                        <th>Descripcion <em>*</em></th>
+                        {% endif %}
+                        {% if field.label == "img_foto" %}
+                        <th>Imagen <em>*</em></th>
+                        {% endif %}
+                        <th>{{ field }}</th>
+                        <th>{{ field.media }}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <br>
+                <label style="color: black;">Los campos con * son obligatorios.</label><br>
+                <p><input type="submit" value="Guardar" onclick="validate()"/></p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
