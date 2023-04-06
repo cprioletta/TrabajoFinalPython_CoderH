@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from ClubArte.forms import Poesia_Form, Search_Poesia_Form
-from ClubArte.models import Poesia, ImgPoesia
+from ClubArte.forms import Poesia_Form, Search_Poesia_Form, Cine_Form, Search_Cine_Form
+from ClubArte.models import Poesia, ImgPoesia, Cine, ImgCine
 
 
 # Create your views here.
@@ -37,7 +37,7 @@ def poesia_crear(request):
 
 def poesia_buscar(request):
     username = None
-    username =request.user.usename
+    username =request.user.username
     p_buscar = []
     if request.method == "POST":
         title_poesia = request.POST.get("title_posia")
@@ -137,3 +137,130 @@ def poesia_ver(request, id_poesia):
     return render(request, 'ClubArte/poesia/ver_poesia.html', contexto)
 
 # ------------------------------------------------------------------------------------
+# modules de fotografia
+def cine_crear(request):
+    cine = Cine_Form(request.POST)
+    username = None
+    username = request.user.username
+    if request.method == "POST":
+        if cine.is_valid():
+            cine = Cine(
+                title_movie=request.POST.get("title_movie"),
+                direc_movie=request.POST.get("direc_movie"),
+                descr_movie=request.POST.get("descr_movie"),
+                user_movie=username,
+            )
+            cine.save()
+            if "img_movie" in request.FILES:
+                imagen = request.FILES["img_movie"]
+                img = ImgCine(id_movie=cine, img_movie=imagen)
+                img.save()
+            messages.info(request, "Los datos se cargaron con éxito.")
+        else:
+            messages.info(request, "Los datos no pudieron ser cargados.")
+        contexto = {
+            "formulariocine": Cine_Form()
+        }
+        return render(request, "ClubArte/cinema/cine.html", contexto)
+
+def cine_buscar(request):
+    username = None
+    username = request.user.username
+    c_buscar = []
+    if request.method == 'POST':
+        title_movie = request.POST.get('title_movie')
+        direc_movie = request.POST.get('direc_movie')
+        descr_movie = request.POST.get('descr_movie')
+        if request.user.is_superuser:
+            c_buscar = Cine.objects.filter(title_movie__icontains=title_movie) & \
+                       Cine.objects.filter(direc_movie__icontains=direc_movie) & \
+                       Cine.objects.filter(descr_movie__contains=descr_movie)
+        else:
+            c_buscar = Cine.objects.filter(title_movie__icontains=title_movie) & \
+                       Cine.objects.filter(direc_movie__icontains=direc_movie) & \
+                       Cine.objects.filter(descr_movie__contains=descr_movie) & \
+                       Cine.objects.filter(user_movie=username)
+
+    contexto = {
+        'buscar_cine': Search_Cine_Form(),
+        'cine': c_buscar
+    }
+    return render(request, 'ClubArte/cinema/search_cine.html', contexto)
+
+def cine_buscar_ver(request):
+    c_buscar = []
+    if request.method == 'POST':
+        title_movie = request.POST.get('title_movie')
+        direc_movie = request.POST.get('direc_movie')
+        descr_movie = request.POST.get('descr_movie')
+        c_buscar = Cine.objects.filter(title_movie__icontains=title_movie) & \
+                    Cine.objects.filter(direc_movie__icontains=direc_movie) & \
+                    Cine.objects.filter(descr_movie__contains=descr_movie)
+
+    contexto = {
+        'buscar_cine': Search_Cine_Form(),
+        'cine': c_buscar
+    }
+    return render(request, 'ClubArte/cinema/obs_cine.html', contexto)
+
+def cine_elim(request, id_movie):
+    cine = Cine.objects.get(id_movie=id_movie)
+    cine.delete()
+
+    return redirect('EliminarCine')
+
+def cine_modif(request, id_movie):
+    cine = Cine.objects.get(id_movie=id_movie)
+
+    if request.method == 'POST':
+        cine_t = Cine_Form(request.POST)
+        if cine_t.is_valid():
+            data = cine_t.cleaned_data
+            cine.title_movie = data.get('title_movie')
+            cine.direc_movie = data.get('direc_movie')
+            cine.descr_movie = data.get('descr_movie')
+            cine.save()
+
+            img = ImgCine.objects.filter(id_movie=cine)
+            if 'ImgCine' in request.FILES:
+                imagen = request.FILES["ImgCine"]
+                if img.exists():
+                    if imagen:
+                        img = img[0]
+                        img.ImgCine = imagen
+                        img.save()
+
+                else:
+                    img = ImgCine(id_movie=cine, ImgCine=imagen)
+                    img.save()
+            messages.info(request, 'Los datos se actualizaron con exito!')
+            return redirect('BuscarCine')
+
+    cine_form = Cine_Form(initial={
+        'title_movie': cine.title_movie,
+        'direc_movie': cine.direc_movie,
+        'descr_movie': cine.descr_movie,
+        'user_movie': cine.user_movie,
+    }
+    )
+    contexto = {
+        'formulariocine': Cine_Form,
+        'cine': cine,
+    }
+
+    return render(request, 'ClubArte/cinema/modif_cine.html', contexto)
+
+def cine_ver(request, id_movie):
+    cine = Cine.objects.get(id_movie=id_movie)
+    cine_form = Cine_Form(initial={
+        'title_movie': cine.title_movie,
+        'direc_movie': cine.direc_movie,
+        'descr_movie': cine.descr_movie,
+    }
+    )
+    contexto = {
+        'formulariocine': Cine_Form,
+        'cine': cine,
+    }
+
+    return render(request, 'AppCoder/cinema/cine_ver.html', contexto)
