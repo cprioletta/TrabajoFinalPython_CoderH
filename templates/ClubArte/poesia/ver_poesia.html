@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+
+{% block headertitlle %}
+<title>Poesia</title>
+{% endblock %}
+
+{% block bodytitleoptions %}
+
+{% endblock %}
+
+{% block bodyheader %}
+
+<h1 class="display-5 fw-bolder text-white mb-2">Poesia seleccionada</h1>
+<div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+</div>
+{% endblock %}
+{% block bodyoptions %}
+<section>
+    <div class="datos-de-usuario">
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <form class="bodyoptionstittle" action="" method="post" enctype="multipart/form-data" novalidate>
+                    {%csrf_token %}
+                    <table style="width:100%">
+                        {{ formCargarPoesia.media }}
+                        <tr>
+                            <th class="thdata">Nombre</th>
+                            <td class="tddata">{{poesia.title_poesia}}</td>
+                        </tr>
+                        <tr>
+                            <th class="thdata">Autor</th>
+                            <td class="tddata">{{poesia.author_poesia}}</td>
+                        </tr>
+                        <tr>
+                            <th class="thdata">Descripcion</th>
+                            <td class="tddata">{{poesia.descr_poesia|safe}}</td>
+                        </tr>
+                        <tr>
+                            <th class="thdata">Imagen</th>
+                            {% if poesia.imagenpoesia.imgpoesia.url != "" %}
+                            <td class="tddata"><img src="{{ poesia.imagenpoesia.imgpoesia.url }}" alt=""
+                                                    width="40px"
+                                                    height="40px"></td>
+                            {% else %}
+                            <td class="tddata">No image</td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            <th class="thdata">Fecha de creacion</th>
+                            <td class="tddata">{{poesia.creationdate_poesia}}</td>
+                        </tr>
+                        <tr>
+                            <th class="thdata">Usuario creador</th>
+                            <td class="tddata">{{poesia.user_poesia}}</td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
