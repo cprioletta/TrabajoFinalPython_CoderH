@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+
+{% block headertitlle %}
+<title>Poesía</title>
+{% endblock %}
+
+{% block bodytitleoptions %}
+
+{% endblock %}
+
+{% block bodyheader %}
+
+<h1 class="display-5 fw-bolder text-white mb-2">Modifique sus poemas.</h1>
+<div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+</div>
+{% endblock %}
+
+{% block bodyoptions %}
+<section>
+    <div class="datos-de-usuario">
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <form class="bodyoptionstittle" action="" method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <table style="width:100%">
+                        {{ formCargarPoesia.media }}
+                        {% for field in formCargarPoesia %}
+                        <tr>
+                            {% if field.label == "Nombre poema" %}
+                            <th>Nombre del poema <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "Autor poema" %}
+                            <th>Nombre del autor <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "Descripcion poema" %}
+                            <th>Descripción del libro <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "Imgpoesia" %}
+                            <th>Imagen poema</th>
+                            {% endif %}
+                            <th>{{ field }}</th>
+                            <th>{{ field.media }}</th>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                    {% if poesia.imagenpoesia.imgpoesia.url != "" %}
+                    <th><img src="{{ poesia.imagenpoesia.imgpoesia.url }}" alt="" width="50px" height="50px"></th>
+                    {% else %}
+                    <td class="tddata"></td>
+                    {% endif %}
+                    <br> <br>
+                    <p><input type="submit" value="Modificar" onclick="validate()"/></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
