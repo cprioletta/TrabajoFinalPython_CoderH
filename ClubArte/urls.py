@@ -17,4 +17,12 @@ urlpatterns = [
     path('Cine/Ver/<int:id_movie>', cine_ver, name='VerCine'),
     path('Cine/Buscar/', cine_buscar, name='BuscarCine'),
     path('Cine/BuscarVer/', cine_buscar_ver, name='BuscarVerCine'),
+
+    path('Foto/Crear/', foto_crear, name='CrearFoto'),
+    path('Foto/Buscar/', foto_buscar, name='BuscarFoto'),
+    path('Foto/Eliminar/<int:id_foto>', foto_eliminar, name='EliminarFoto'),
+    path('Foto/Modificar/<int:id_foto>', foto_modificar, name='ModifFoto'),
+    path('Foto/BuscarVer/', foto_buscar_ver, name='BuscarVerFoto'),
+    path('Foto/Ver/<int:id_foto>', foto_ver, name='VerFoto'),
+
 ]

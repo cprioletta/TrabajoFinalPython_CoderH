@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from ClubArte.forms import Poesia_Form, Search_Poesia_Form, Cine_Form, Search_Cine_Form
-from ClubArte.models import Poesia, ImgPoesia, Cine, ImgCine
+from ClubArte.forms import Poesia_Form, Search_Poesia_Form, Cine_Form, Search_Cine_Form, Foto_Forms, Search_Foto_Forms
+from ClubArte.models import Poesia, ImgPoesia, Cine, ImgCine, Fotografia, ImgFotograf
 
 
 # Create your views here.
@@ -137,7 +137,7 @@ def poesia_ver(request, id_poesia):
     return render(request, 'ClubArte/poesia/ver_poesia.html', contexto)
 
 # ------------------------------------------------------------------------------------
-# modules de fotografia
+# cinematografia modules
 def cine_crear(request):
     cine = Cine_Form(request.POST)
     username = None
@@ -263,4 +263,134 @@ def cine_ver(request, id_movie):
         'cine': cine,
     }
 
-    return render(request, 'AppCoder/cinema/cine_ver.html', contexto)
+    return render(request, 'ClubArte/cinema/cine_ver.html', contexto)
+
+# ------------------------------------------------------------------------------------
+# fotografia modules
+
+def foto_crear(request):
+    foto = Foto_Forms(request.POST)
+    username = None
+    username = request.user.username
+    if request.method == 'POST':
+        if foto.is_valid():
+            foto = Fotografia(
+                title_foto=request.POST.get('title_foto'),
+                author_foto=request.POST.get('author_foto'),
+                descr_foto=request.POST.get('descr_foto'),
+                user_foto=username,
+            )
+            foto.save()
+            if 'img_foto' in request.FILES:
+                imagen = request.FILES["imgmus"]
+                img = ImgFotograf(id_musica=foto, imgmus=imagen)
+                img.save()
+            messages.info(request, 'Los datos se han cargado con exito!')
+        else:
+            messages.info(request, 'Los datos no se han cargado con exito!')
+
+    contexto = {
+        'formulariomusica': Foto_Forms()
+    }
+    return render(request, 'ClubArte/photo/photo.html', contexto)
+
+def foto_buscar(request):
+    username = None
+    username = request.user.username
+    f_buscar = []
+    if request.method == 'POST':
+        title_foto = request.POST.get('title_foto')
+        author_foto = request.POST.get('author_foto')
+        descr_foto = request.POST.get('descr_foto')
+        if request.user.is_superuser:
+            f_buscar = Fotografia.objects.filter(title_foto__icontains=title_foto) & \
+                       Fotografia.objects.filter(author_foto__icontains=author_foto) & \
+                       Fotografia.objects.filter(descr_foto__icontains=descr_foto)
+        else:
+            f_buscar = Fotografia.objects.filter(title_foto__icontains=title_foto) & \
+                       Fotografia.objects.filter(author_foto__icontains=author_foto) & \
+                       Fotografia.objects.filter(descr_foto__icontains=descr_foto) & \
+                       Fotografia.objects.filter(user_foto=username)
+    contexto = {
+        'buscar_foto': Search_Foto_Forms,
+        'musica': f_buscar
+    }
+    return render(request, 'ClubArte/photo/foto_buscar.html', contexto)
+
+def foto_buscar_ver(request):
+    f_buscar = []
+    if request.method == 'POST':
+        title_foto = request.POST.get('title_foto')
+        author_foto = request.POST.get('author_foto')
+        descr_foto = request.POST.get('descr_foto')
+        f_buscar = Fotografia.objects.filter(title_foto__icontains=title_foto) & \
+                    Fotografia.objects.filter(author_foto__icontains=author_foto) & \
+                    Fotografia.objects.filter(descr_foto__icontains=descr_foto)
+        contexto = {
+        'buscar_foto': Search_Foto_Forms(),
+        'foto': f_buscar
+    }
+    return render(request, 'ClubArte/photo/buscar_ver_foto.html', contexto)
+
+def foto_eliminar(request, id_foto):
+    foto = Fotografia.objects.get(id_foto=id_foto)
+    foto.delete()
+
+    return redirect('BuscarFoto')
+
+def foto_modificar(request, id_foto):
+    foto = Fotografia.objects.get(id_foto=id_foto)
+
+    if request.method == 'POST':
+        fot = Foto_Forms(request.POST)
+        if fot.is_valid():
+            data = fot.cleaned_data
+            fot.title_foto = data.get('title_foto')
+            fot.author_foto = data.get('author_foto')
+            fot.descr_foto = data.get('descr_foto')
+            fot.save()
+
+            img = ImgFotograf.objects.filter(id_foto=fot)
+            if 'imgfot' in request.FILES:
+                imagen = request.FILES["imgfot"]
+                if img.exists():
+                    if imagen:
+                        img = img[0]
+                        img.ImgFotograf = imagen
+                        img.save()
+
+                else:
+                    img = ImgFotograf(id_foto=fot, imgfot=imagen)
+                    img.save()
+            messages.info(request, 'Los datos se han actualizado con exito!')
+
+            return redirect('BuscarFoto')
+
+    foto_form = Foto_Forms(initial={
+        'title_foto': fot.title_foto,
+        'author_foto': fot.author_foto,
+        'descr_foto': fot.descr_foto,
+        'user_foto': fot.user_foto,
+    }
+    )
+    contexto = {
+        'formulariofoto': foto_form,
+        'foto': fot,
+    }
+
+    return render(request, 'ClubArte/photo/modif_foto.html', contexto)
+
+def foto_ver(request, id_foto):
+    fot = Fotografia.objects.get(id_foto=id_foto)
+    foto_form = Foto_Forms(initial={
+        'title_foto': fot.title_foto,
+        'author_foto': fot.author_foto,
+        'descr_foto': fot.descr_foto,
+    }
+    )
+    contexto = {
+        'formulariofoto': foto_form,
+        'foto': fot,
+    }
+
+    return render(request, 'ClubArte/photo/ver_foto.html', contexto)
