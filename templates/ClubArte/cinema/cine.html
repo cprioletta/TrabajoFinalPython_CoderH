@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block headertitle %}
+    <title>Cinematografía</title>
+{% endblock %}
+
+{% block bodytitleoptions %}
+        <!-- aca va la opcion de log -->
+{% endblock %}
+
+{% block bodyheader %}
+<h1 class="display-5 fw-bolder text-white mb-2"> Cargue su cinematografía aquí. </h1>
+<p class="lead text-white-50 mb-4"> A continuación cargá tu cinematografía! </p>
+<div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+</div>
+{% endblock %}
+
+{% block bodyoptions %}
+<header>
+    <div class="datos-cine">
+        <div class="space2">
+        </div>
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <form class="bodyoptionstitle" action="{% url "CrearCine" %}" method="post"
+                      enctype="multipart/form-data">{% csrf_token %}
+                    <table style="width:100%">
+                        {{ Cine_Form.media }}
+                        {% for field in Cine_Form %}
+                        <tr>
+                            {% if field.label == "Titulo pelicula" %}
+                            <th>Nombre de la pelicula <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "Nombre director" %}
+                            <th>Nombre del director <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "Descripcion" %}
+                            <th>Descripción <em>*</em></th>
+                            {% endif %}
+                            {% if field.label == "ImgCine" %}
+                            <th>Imagen literatura</th>
+                            {% endif %}
+                            <th>{{ field }}</th>
+                            <th>{{ field.media }}</th>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                    <label style="color: black;">Los campos con * son obligatorios.</label><br>
+                    <p><input type="submit" value="Guardar" onclick="validate()"/></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
