@@ -1,15 +1,19 @@
 {% extends "base.html" %}
+{% include 'styles/styles.html' %}
 
 {% block header %}
-
     <title>Main</title>
-
 {% endblock %}
 
 {% block bodytitleoptions %}
-
-     <!-- aca van las opciones de login logout y logon -->
-
+    {% if request.user.is_authenticated %}
+        <a class="btn btn-primary" href="{% url 'UserCoderLogOut' %}"> Logout </a>
+            {% else %}
+            <a class="btn btn-primary" href="{% url 'UserCoderLogin' %}"> Login </a>
+                <div class="space">
+                </div>
+            <a class="btn btn-primary" href="{% url 'UserCoderLogon' %}"> Create user </a>
+    {% endif %}
 {% endblock %}
 
 <header class="bodyheader">
@@ -28,3 +32,165 @@
         </div>
     </div>
 </header>
+
+{% block bodyoptions %}
+<section class="py-5 border-bottom" id="features">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content space-evenly ">
+            <div class="col-lg-4 mb-5 mb-lg-0 ">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
+                        class="bi bi-collection"></i>
+                </div>
+                <h2 class="h4 fw-bolder">Ciclo de cine</h2>
+                <p> En el ciclo de cine proponemos películas, cortometrajes y documentales para verlas y luego,
+                    hacer nuestra review de la misma para compatirla con el resto de los participantes </p>
+                {% if user.is_authenticated %}
+                <a class="text-decoration-none" href="{% url 'CrearPoesia' %}">
+                    Ir a cargar nuevas reviews.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <br>
+                <a class="text-decoration-none" href="{% url 'PoesiaBuscar' %}">
+                    Ir a administrar mis reviews.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                {% endif %}
+                <br>
+                <a class="text-decoration-none" href="{% url 'PoesiaBuscarVer' %}">
+                    Ir a buscar reviews.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i>
+                </div>
+                <h2 class="h4 fw-bolder"> Ciclo de poesía </h2>
+                <p> En el ciclo de poesía ponemos en común los poemas que leemos y que queremos recomendar
+                    al resto del club. </p>
+                {% if user.is_authenticated %}
+                <a class="text-decoration-none" href="{% url 'CrearCine' %}">
+                    Ir a cargar poesía.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <br>
+                <a class="text-decoration-none" href="{% url 'BuscarCine' %}">
+                    Ir a administrar mis recomendaciones.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                {% endif %}
+                <br>
+                <a class="text-decoration-none" href="{% url 'BuscarVerCine' %}">
+                    Ir a recomendaciones existentes.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-lg-4 ">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i>
+                </div>
+                <h2 class="h4 fw-bolder"> Concurso de fotografía </h2>
+                <p> En el concurso mensual de fotografía elegimos la mejor fotografía del mes entre las que
+                    suben los miembros del club. </p>
+                {% if user.is_authenticated %}
+                <a class="text-decoration-none" href="{% url 'CrearFoto' %}">
+                    ir a cargar mi fotografía.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <br>
+                <a class="text-decoration-none" href="{% url 'BuscarFoto' %}">
+                    Ir a administrar mis fotografías.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                {% endif %}
+                <br>
+                <a class="text-decoration-none" href="{% url 'BuscarVerFoto' %}">
+                    Ir a buscar fotos existentes.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <br>
+            <br>
+            <!--para que un super user pueda adm users-->
+            {% if user.is_authenticated and user.is_superuser%}
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
+                        class="bi bi-collection"></i>
+                </div>
+                <h2 class="h4 fw-bolder"> Usuarios </h2>
+                <p> Administración de usuarios para superusers.</p>
+                <a class="text-decoration-none" href="{% url 'TPFinalUsuariosCrear' %}">
+                    Ir a crear usuarios.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <br>
+                <a class="text-decoration-none" href="{% url 'TPFinalUsuariosBuscar' %}">
+                    Ir a administrar usuarios existentes.
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block bodycontact %}
+<section class="bg-light py-5" id="contact">
+    <div class="container px-5 my-5 px-5">
+        <div class="text-center mb-5">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i>
+            </div>
+            <h2 class="fw-bolder"> Contáctese con nosotros! </h2>
+            <p class="lead mb-0"> Nos encantaria conocer su opinion. </p>
+        </div>
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-3">
+                <form id="fcf-form-id" class="fcf-form-class" method="post" action="{% url 'Contact' %}">
+                    {% csrf_token %}
+
+                    <div class="fcf-form-group">
+                        <label for="Name" class="fcf-label"> Ingrese su nombre </label>
+                        <div class="fcf-input-group">
+                            <input type="text" id="Name" name="Name" class="fcf-form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="fcf-form-group">
+                        <label for="Email" class="fcf-label"> Ingrese su correo </label>
+                        <div class="fcf-input-group">
+                            <input type="email" id="Email" name="Email" class="fcf-form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="fcf-form-group">
+                        <label for="Email" class="fcf-label"> Ingrese un asunto </label>
+                        <div class="fcf-input-group">
+                            <input type="text" id="Subject" name="Subject" class="fcf-form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="fcf-form-group">
+                        <label for="Message" class="fcf-label"> Ingrese su mensaje </label>
+                        <div class="fcf-input-group">
+                                    <textarea id="Message" name="Message" rows="6"
+                                              maxlength="3000" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="fcf-form-group">
+                        <button type="submit" id="fcf-button"
+                                class="fcf-btn fcf-btn-primary fcf-btn-lg fcf-btn-block"> Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
