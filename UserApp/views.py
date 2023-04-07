@@ -8,8 +8,8 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 
-from UserCoder.forms import userRegisterForm, UserFindForm, UserChangeForm
-from UserCoder.models import Avatar
+from UserApp.forms import userRegisterForm, UserFindForm, UserChangeForm
+from UserApp.models import Avatar
 
 
 def user_login(request):

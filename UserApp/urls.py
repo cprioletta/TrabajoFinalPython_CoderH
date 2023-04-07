@@ -2,7 +2,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from UserCoder.views import *
+from UserApp.views import *
 
 urlpatterns = [
     path('Login/', user_login, name='UserCoderLogin'),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('Usuario/Eliminar/<str:username>', usuario_eliminar, name='TPFinalUsuariosEliminar'),
     path('Usuario/Modificar/<str:username>', usuario_modificar, name='TPFinalUsuariosModificar'),
     path('Usuario/CambiarPass/', ChangePasswordView.as_view(), name='TPFinalUsuariosModificarPass'),
+
 # Forget Password
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
